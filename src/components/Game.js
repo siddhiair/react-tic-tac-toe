@@ -21,10 +21,15 @@ const checkWinner = (boxVal) => {
 	for(let i=0;i<matches.length;i++){
 		const [x,y,z] = matches[i];
 		if(boxVal[x] === boxVal[y] && boxVal[x] === boxVal[z]){
-			const matchedBox = document.querySelectorAll(`.box${x},.box${y},.box${z}`);
-			if(boxVal[x]) matchedBox.forEach(el=>el.classList.add("done"))
+			if(boxVal[x]){
+				const matchedBox = document.querySelectorAll(`.box${x},.box${y},.box${z}`);
+				matchedBox.forEach(el=>el.classList.add("done"))
+			}
 			return boxVal[x];
 		}
+	}
+	if(!boxVal.includes(null)){
+		return "Draw";
 	}
 	return null;
 }
@@ -43,7 +48,14 @@ const Game = () => {
 		setIsXNext(!isXNext);
 	}
 
+	const restart = () => {
+		setBoxVal(Array(9).fill(null));
+		const boxes = document.querySelectorAll('.ttt-box');
+		boxes.forEach((el)=>el.classList.remove("done"))
+	};
+
 	const result = checkWinner(boxVal);
+	
 
 	return(
 		<>
@@ -58,9 +70,11 @@ const Game = () => {
 					}
 				</div>
 			</div>
-			{result &&
+			
+			{(result !== 'Draw' && result !== null) &&
 				<div>
 					<div className="result">Winner is: {result}</div>
+					<button className='btn' onClick={restart}>Start Over</button>
 					<div className="confetti">
 						<div className="confetti-piece"></div>
 						<div className="confetti-piece"></div>
@@ -76,6 +90,12 @@ const Game = () => {
 						<div className="confetti-piece"></div>
 						<div className="confetti-piece"></div>
 					</div>
+				</div>
+			}
+			{result === 'Draw' &&
+				<div className='text-center'>
+					<div className="result">Match is drawn</div>
+					<button className='btn' onClick={restart}>Start Over</button>
 				</div>
 			}
 		</>
